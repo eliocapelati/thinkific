@@ -1,0 +1,444 @@
+openapi: 3.0.3
+info:
+  title: Sports Management API
+  description: >-
+    Sports Management API: Take home test for the role Senior Backend Engineer (Distributed)
+  version: 1.0.0
+  contact:
+    name: Thinkific Take Home Test
+    url: https://thinkific.com/careers/job-post?gh_jid=5494684002
+servers:
+  - url: 'http://localhost:8080/v1'
+    description: Local Development
+  - url: 'https://thinkific.capelati.com/v1'
+    description: Production Server
+paths:
+  /users:
+    post:
+      tags:
+        - User
+      summary: User signup
+      description: Path to onboard new managers
+      operationId: createUserRequest
+      requestBody:
+        $ref: "#/components/requestBodies/CreateUser"
+      responses:
+        204:
+          description: Onboarding successfully processed
+        400:
+          $ref: "#/components/responses/BadRequestErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+    get:
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      summary: Get user profile
+      description: Recover information saved during the signup process
+      operationId: getUserInfo
+      responses:
+        200:
+          $ref: "#/components/responses/UserResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+  /users/login:
+    post:
+      tags:
+        - User
+      summary: User login
+      description: Login users created on signup process
+      operationId: login
+      requestBody:
+        $ref: "#/components/requestBodies/LoginRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/LoginResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+
+  /teams:
+    post:
+      tags:
+        - Teams
+      security:
+        - bearerAuth: []
+      summary: Create a teams
+      description: Create a team and attach to the current user in the auth token
+      operationId: createTeam
+      requestBody:
+        $ref: "#/components/requestBodies/CreateTeamRequest"
+      responses:
+        201:
+          $ref: "#/components/responses/CreateTeamResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+    get:
+      tags:
+        - Teams
+      security:
+        - bearerAuth: [ ]
+      summary: Get all teams paged
+      description: Create a team and attach to the current user in the auth token
+      operationId: getTeams
+      parameters:
+        - $ref: "#/components/parameters/Pageable"
+      responses:
+        200:
+          $ref: "#/components/responses/PagedTeamResponse"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+
+  /teams/{id}:
+    get:
+      tags:
+        - Teams
+      security:
+        - bearerAuth: [ ]
+      summary: Get a team by id
+      description: Create a team and attach to the current user in the auth token
+      operationId: getTeamById
+      parameters:
+        - $ref: "#/components/parameters/TeamId"
+      responses:
+        200:
+          $ref: "#/components/responses/TeamResponse"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+    put:
+      tags:
+        - Teams
+      security:
+        - bearerAuth: []
+      summary: Update a team by id
+      description: Create a team and attach to the current user in the auth token
+      operationId: updateTeam
+      requestBody:
+        $ref: "#/components/requestBodies/CreateTeamRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/TeamResponse"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+
+components:
+  parameters:
+    TeamId:
+      name: TeamId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+    Pageable:
+      name: pageable
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/PageableRequest"
+  responses:
+    LoginResponse:
+      description: Successful login information
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginResponse"
+    UserResponse:
+      description: User information
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/UserProperties"
+              - $ref: "#/components/schemas/UserId"
+              - $ref: "#/components/schemas/UserEmail"
+              - $ref: "#/components/schemas/UserRequiredProperties"
+    CreateTeamResponse:
+      description: Successful created a team
+      headers:
+        Location:
+          schema:
+            type: string
+          example: "/teams/{id}"
+          description: Path to get the created team
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TeamId"
+    TeamResponse:
+      description: Team Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TeamResponse"
+
+    PagedTeamResponse:
+      description: Paged team reaponse
+      content:
+        application/json:
+          schema:
+            properties:
+              content:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamResponse"
+            allOf:
+              - $ref:  "#/components/schemas/PageableResponse"
+
+    BadRequestErrorInfo:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+    NotFoundErrorInfo:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+    UnauthorizedErrorInfo:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+    ServiceUnavailableErrorInfo:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+  requestBodies:
+    LoginRequest:
+      description: Signup a new User
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/UserPassword"
+              - $ref: "#/components/schemas/EmailOrUsername"
+              - $ref: "#/components/schemas/LoginRequiredProperties"
+
+    CreateUser:
+      description: Signup a new User
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/UserProperties"
+              - $ref: "#/components/schemas/UserPassword"
+              - $ref: "#/components/schemas/UserEmail"
+              - $ref: "#/components/schemas/NewUserRequiredProperties"
+    CreateTeamRequest:
+      description: Create a team considering a uniq name for current user
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/TeamProperties"
+              - $ref: "#/components/schemas/TeamRequiredProperties"
+
+  schemas:
+    Id:
+      type: string
+      description: Id spec used in the entire API
+      example: "507f1f77bcf86cd799439011"
+    Name:
+      type: string
+      description: Representation of a name
+      minLength: 2
+      example: "John"
+    UserProperties:
+      type: object
+      properties:
+        firstName:
+          $ref: "#/components/schemas/Name"
+        lastName:
+          $ref: "#/components/schemas/Name"
+        userName:
+          type: string
+          example: JohnDoe
+          minLength: 5
+          maxLength: 15
+    UserRequiredProperties:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - userName
+        - email
+    NewUserRequiredProperties:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/UserRequiredProperties"
+      required:
+        - password
+    UserId:
+      type: string
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+    Password:
+      type: string
+      description: "Password strength is an important consideration when using passwords for authentication. A strong password policy will make it difficult, if not improbable, for someone to guess a password through either manual or automated means."
+      example: "Pl3A$eCh4ng3"
+      format: password
+      minLength: 8
+      pattern: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=()]).{8,}$"
+    EmailOrUsername:
+      type: object
+      properties:
+        userNameOrEmail:
+          type: string
+          example: "myname@email.com"
+    LoginRequiredProperties:
+      type: object
+      required:
+        - emailOrUsername
+        - password
+    Email:
+      type: string
+      format: email
+      example: "myname@email.com"
+    UserEmail:
+      type: string
+      properties:
+        email:
+          $ref: "#/components/schemas/Email"
+    UserPassword:
+      type: string
+      properties:
+        password:
+          $ref: "#/components/schemas/Password"
+    LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        idToken:
+          type: string
+        refreshToken:
+          type: string
+        tokenType:
+          type: string
+        expiresIn:
+          type: integer
+          format: int64
+        scope:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+    TeamProperties:
+      type: object
+      properties:
+        teamName:
+          $ref: "#/components/schemas/Name"
+        description:
+          type: string
+    TeamRequiredProperties:
+      type: object
+      required:
+        - teamName
+        - description
+    TeamId:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+    TeamResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/TeamProperties"
+        - $ref: "#/components/schemas/TeamId"
+
+    PageableResponse:
+      description: Default pageable response
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          description: Total pages
+          example: 1
+        totalElements:
+          type: integer
+          description: Total number of elements
+          example: 1
+        size:
+          type: integer
+          description: Sum of elements in content
+          example: 1
+
+    PageableRequest:
+      description: Pageable query parameters
+      type: object
+      properties:
+        page:
+          type: integer
+          default: 0
+        size:
+          type: integer
+          default: 100
+
+    #Error handling
+    Violation:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          example: "userName"
+        message:
+          type: string
+          example: "Cant be null"
+    ErrorInfo:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Date Time in UTC"
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Violation"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+tags:
+  - name: Teams
+    description: Manage teams
+  - name: User
+    description: Users management (Convenient for test purposes)
+
+
