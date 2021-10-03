@@ -1,0 +1,61 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+
+auth0:
+  domain: ${AUTH0_DOMAIN}
+  issuer-uri: "https://${auth0.domain}/"
+  clientId: ${AUTH0_CLIENT_ID}
+  clientSecret: ${AUTH0_CLIENT_SECRET}
+  connection: ${AUTH0_CLIENT_CONNECTION}
+  audience: ${AUTH0_CLIENT_AUDIENCE}
+  scope: ${AUTH0_CLIENT_SCOPE}
+
+
+
+spring:
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI}
+      auto-index-creation: true
+      database: ${SPRING_DATA_MONGODB_DATABASE:sportsmanagement-prod}
+  jackson:
+    default-property-inclusion: non_null
+  security:
+    oauth2:
+      resourceserver:
+      jwt:
+        issuer-uri: "https://${auth0.domain}/"
+        jwk-set-uri: "https://${auth0.domain}/.well-known/jwks.json"
+
+
+
+
+#https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator.endpoints
+management:
+  server.ssl.enabled: false
+  info:
+    build.enabled: true
+    defaults.enabled: true
+    git.mode: full
+  endpoints:
+    web.base-path: /actuator
+    health:
+      show-details: always
+  endpoint:
+    health.enabled: true
+  health:
+    defaults.enabled: true
+info:
+  app:
+    name: '@project.name@'
+    description: '@project.description@'
+  build:
+    groupId: '@project.groupId@'
+    artifact: '@project.artifactId@'
+    name: '@project.name@'
+    version: '@project.version@'
+  env:
+    java:
+      vendor: ${java.specification.vendor}
+      vm-name: ${java.vm.name}

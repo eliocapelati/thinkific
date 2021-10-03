@@ -1,0 +1,32 @@
+auth0:
+  domain: "eliocapelati.us.auth0.com"
+  issuer-uri: "https://${auth0.domain}/"
+  clientId: "123"
+  clientSecret: "123"
+  connection: "foo"
+  audience: "https://${auth0.domain}/api/v2/"
+  scope: openid profile email
+
+management:
+  info:
+    build.enabled: false
+    defaults.enabled: false
+  endpoint:
+    health.enabled: false
+  health:
+    defaults.enabled: false
+logging:
+  level:
+    com.github.dockerjava: error
+    org.springframework: error
+    com.thinkific: trace
+    org.mongodb: off
+spring:
+  main:
+    banner-mode: off
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "https://${auth0.domain}/"
+          jwk-set-uri: "https://${auth0.domain}/.well-known/jwks.json"
