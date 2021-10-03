@@ -3,6 +3,7 @@ package com.thinkific.sportsapi.config.security;
 import com.thinkific.sportsapi.config.properties.Auth0Properties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -12,6 +13,8 @@ import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoders;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -43,10 +46,11 @@ public class WebSecurityConfig {
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .cors().configurationSource(corsConfigurationSource());
-//                .and()
-//                .requestCache().requestCache(NoOpServerRequestCache.getInstance()).and()
-//                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance());
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .requestCache().requestCache(NoOpServerRequestCache.getInstance())
+                .and()
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance());
 
         //Set up the application layer
         http
@@ -76,6 +80,7 @@ public class WebSecurityConfig {
 
 
     @Bean
+    @Profile("!test")
     public ReactiveJwtDecoder jwtDecoder() {
 
         var jwtDecoder =
