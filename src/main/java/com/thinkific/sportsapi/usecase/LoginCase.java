@@ -1,8 +1,8 @@
 package com.thinkific.sportsapi.usecase;
 
 
-import com.thinkific.sportsapi.api.domain.LoginRequest;
-import com.thinkific.sportsapi.api.domain.LoginResponse;
+import com.thinkific.sportsapi.api.domain.users.LoginRequest;
+import com.thinkific.sportsapi.api.domain.users.LoginResponse;
 import com.thinkific.sportsapi.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

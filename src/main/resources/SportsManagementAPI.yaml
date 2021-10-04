@@ -75,6 +75,8 @@ paths:
       responses:
         201:
           $ref: "#/components/responses/CreateTeamResponse"
+        400:
+          $ref: "#/components/responses/BadRequestErrorInfo"
         401:
           $ref: "#/components/responses/UnauthorizedErrorInfo"
         503:
@@ -92,10 +94,10 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/PagedTeamResponse"
-        404:
-          $ref: "#/components/responses/NotFoundErrorInfo"
         401:
           $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
 
@@ -119,7 +121,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
-    put:
+    patch:
       tags:
         - Teams
       security:
@@ -127,15 +129,19 @@ paths:
       summary: Update a team by id
       description: Create a team and attach to the current user in the auth token
       operationId: updateTeam
+      parameters:
+        - $ref: "#/components/parameters/TeamId"
       requestBody:
-        $ref: "#/components/requestBodies/CreateTeamRequest"
+        $ref: "#/components/requestBodies/PatchTeamRequest"
       responses:
-        200:
-          $ref: "#/components/responses/TeamResponse"
-        404:
-          $ref: "#/components/responses/NotFoundErrorInfo"
+        204:
+          description: "Updated"
+        400:
+          $ref: "#/components/responses/BadRequestErrorInfo"
         401:
           $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
 
@@ -181,7 +187,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/TeamId"
+            $ref: "#/components/schemas/TeamResponse"
     TeamResponse:
       description: Team Response
       content:
@@ -255,6 +261,14 @@ components:
             allOf:
               - $ref: "#/components/schemas/TeamProperties"
               - $ref: "#/components/schemas/TeamRequiredProperties"
+
+    PatchTeamRequest:
+      description: Update a team
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/TeamProperties"
 
   schemas:
     Id:

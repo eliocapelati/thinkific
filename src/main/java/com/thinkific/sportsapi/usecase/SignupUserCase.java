@@ -1,6 +1,6 @@
 package com.thinkific.sportsapi.usecase;
 
-import com.thinkific.sportsapi.api.domain.CreateUserRequest;
+import com.thinkific.sportsapi.api.domain.users.CreateUserRequest;
 import com.thinkific.sportsapi.api.exception.AlreadyExistsException;
 import com.thinkific.sportsapi.data.domain.UsersEntity;
 import com.thinkific.sportsapi.data.repository.UsersRepository;

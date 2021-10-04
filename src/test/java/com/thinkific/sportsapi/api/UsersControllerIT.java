@@ -1,26 +1,23 @@
 package com.thinkific.sportsapi.api;
 
-import com.github.javafaker.Faker;
-import com.thinkific.sportsapi.api.domain.LoginRequest;
-import com.thinkific.sportsapi.api.domain.LoginResponse;
-import com.thinkific.sportsapi.api.domain.UserResponse;
-import com.thinkific.sportsapi.config.ContainerSetup;
+import com.thinkific.sportsapi.api.domain.users.LoginRequest;
+import com.thinkific.sportsapi.api.domain.users.LoginResponse;
+import com.thinkific.sportsapi.api.domain.users.UserResponse;
+import com.thinkific.sportsapi.config.CommonSetup;
 import com.thinkific.sportsapi.config.IntegrationTests;
-import com.thinkific.sportsapi.api.domain.CreateUserRequest;
 import com.thinkific.sportsapi.api.exception.domain.ErrorInfo;
 import com.thinkific.sportsapi.config.JwtTestSecurityConfig;
 import com.thinkific.sportsapi.data.repository.UsersRepository;
-import com.thinkific.sportsapi.service.AuthService;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,25 +27,21 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @IntegrationTests
-class UsersControllerIT implements ContainerSetup {
+@Testcontainers
+class UsersControllerIT extends CommonSetup<UsersRepository> {
+
+    @Container
+    static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.2");
+
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+    }
 
     private final Logger log = LoggerFactory.getLogger(UsersControllerIT.class);
     private final String BASE_PATH = "/v1/users";
 
-    @Autowired
-    private WebTestClient client;
-    @Autowired
-    private UsersRepository usersRepository;
-    @Autowired
-    private AuthService auth;
-    @Autowired
-    private Faker faker;
 
-    @BeforeEach
-    public void setup(){
-        usersRepository.deleteAll();
-        client = client.mutate().responseTimeout(Duration.ofSeconds(60)).build();
-    }
 
     @Test
     @DisplayName("Attempt to create an empty user")
@@ -133,9 +126,6 @@ class UsersControllerIT implements ContainerSetup {
                     }
                     """.formatted(getValidPassword());
 
-        //client = client.mutate().responseTimeout(Duration.ofMinutes(15)).build();
-
-
         final var response = client
                 .post()
                 .uri(BASE_PATH + "/login")
@@ -147,6 +137,29 @@ class UsersControllerIT implements ContainerSetup {
             .expectStatus().is4xxClientError()
             .expectBody(ErrorInfo.class)
             .value(errorInfo -> assertEquals(1, errorInfo.getErrors().size()));
+    }
+
+    @Test
+    @DisplayName("Returns Bad Request on password with invalid json structure")
+    void badRequestInvalidJsonFormat() {
+        var login = """
+                    {
+                        "password" : "98""
+                        "userNameOrEmail" : "98"
+                    }
+                    """;
+
+        final var response = client
+                .post()
+                .uri(BASE_PATH + "/login")
+                .contentType(APPLICATION_JSON)
+                .bodyValue(login)
+                .exchange();
+
+        response
+                .expectStatus().is4xxClientError()
+                .expectBody(ErrorInfo.class)
+                .consumeWith(consume -> log.debug("ErrorInfo {}", consume));
     }
 
     @Test
@@ -216,22 +229,12 @@ class UsersControllerIT implements ContainerSetup {
         final var password = getValidPassword();
         var userRequest = createUserRequest(password, JwtTestSecurityConfig.USER_EMAIL_VALUE);
 
-
-        client.post()
-                .uri(BASE_PATH)
-                .contentType(APPLICATION_JSON)
-                .bodyValue(userRequest)
-                .exchange()
-                .expectStatus().is2xxSuccessful();
-
-        var loginResponse = createLoginResponse();
-
-        final String token = "%s %s".formatted(loginResponse.getTokenType(), loginResponse.getAccessToken());
+        createValidUser(userRequest);
 
         final var response = client.get()
                 .uri(BASE_PATH)
                 .accept(APPLICATION_JSON)
-                .header("Authorization", token)
+                .header("Authorization", getAccessToken())
                 .exchange();
 
         response
@@ -245,37 +248,5 @@ class UsersControllerIT implements ContainerSetup {
                 .consumeWith(consume -> log.debug("Success {}", consume));
 
     }
-
-    private String getValidPassword() {
-        return faker.regexify("([0-9][a-z][A-Z][!@#$~&*()+=:/?\"*]){8,100}");
-    }
-
-    private CreateUserRequest createUserRequest(final String password, final String email){
-        var userRequest = new CreateUserRequest();
-        userRequest.setPassword(password);
-        userRequest.setUserName(faker.regexify("[a-z]{5,15}"));
-        userRequest.setLastName(faker.name().lastName());
-        userRequest.setEmail(email);
-        userRequest.setFirstName(faker.name().firstName());
-        return userRequest;
-    }
-
-    private CreateUserRequest createUserRequest(final String password) {
-        return createUserRequest(password, faker.internet().emailAddress());
-    }
-
-    private LoginResponse createLoginResponse(){
-        final var response = new LoginResponse();
-
-        response.setTokenType("Bearer");
-        response.setAccessToken(faker.internet().uuid());
-        response.setExpiresAt(Instant.now().plus(1, ChronoUnit.DAYS));
-        response.setRefreshToken(faker.internet().uuid());
-        response.setExpiresIn(86400L);
-        response.setScope("openid profile email address phone update:current_user_metadata");
-
-        return response;
-    }
-
 
 }

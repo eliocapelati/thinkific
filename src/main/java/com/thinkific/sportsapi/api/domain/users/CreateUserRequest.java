@@ -1,4 +1,4 @@
-package com.thinkific.sportsapi.api.domain;
+package com.thinkific.sportsapi.api.domain.users;
 
 
 import javax.validation.constraints.Email;

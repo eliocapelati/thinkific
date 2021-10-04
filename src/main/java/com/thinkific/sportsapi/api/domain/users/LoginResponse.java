@@ -1,4 +1,4 @@
-package com.thinkific.sportsapi.api.domain;
+package com.thinkific.sportsapi.api.domain.users;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -1,9 +1,9 @@
 package com.thinkific.sportsapi.api.controller;
 
-import com.thinkific.sportsapi.api.domain.CreateUserRequest;
-import com.thinkific.sportsapi.api.domain.LoginRequest;
-import com.thinkific.sportsapi.api.domain.LoginResponse;
-import com.thinkific.sportsapi.api.domain.UserResponse;
+import com.thinkific.sportsapi.api.domain.users.CreateUserRequest;
+import com.thinkific.sportsapi.api.domain.users.LoginRequest;
+import com.thinkific.sportsapi.api.domain.users.LoginResponse;
+import com.thinkific.sportsapi.api.domain.users.UserResponse;
 import com.thinkific.sportsapi.usecase.GetUserCase;
 import com.thinkific.sportsapi.usecase.LoginCase;
 import com.thinkific.sportsapi.usecase.SignupUserCase;
@@ -20,7 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/v1/users")
-public class UsersController {
+public final class UsersController extends BaseController {
 
     private final Logger log = LoggerFactory.getLogger(UsersController.class);
     private final SignupUserCase signupUserCase;
@@ -53,7 +53,7 @@ public class UsersController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody UserResponse getUserInfo(@AuthenticationPrincipal Jwt principal){
         log.trace("Get Uer {}", principal);
-        final String email = principal.getClaimAsString("email");
+        final String email = getUserEmail(principal);
         return userCase.handle(email);
     }
 
