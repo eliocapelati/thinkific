@@ -23,7 +23,7 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/CreateUser"
       responses:
-        204:
+        201:
           description: Onboarding successfully processed
         400:
           $ref: "#/components/responses/BadRequestErrorInfo"
@@ -159,7 +159,7 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/CreatePlayerRequest"
       responses:
-        200:
+        201:
           $ref: "#/components/responses/PlayersResponse"
         401:
           $ref: "#/components/responses/UnauthorizedErrorInfo"
@@ -232,9 +232,106 @@ paths:
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
 
+  /teams/{teamId}/matches:
+    post:
+      tags:
+        - Matches
+      security:
+        - bearerAuth: [ ]
+      summary: Create a match to a team that belongs to the current user
+      description: Create a mactch to the team
+      operationId: createMatch
+      parameters:
+        - $ref: "#/components/parameters/TeamId"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateMatchRequest"
+      responses:
+        201:
+          $ref: "#/components/responses/MatchResponse"
+        400:
+          $ref: "#/components/responses/BadRequestErrorInfo"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+    get:
+      tags:
+        - Matches
+      security:
+        - bearerAuth: [ ]
+      summary: Get all matches paged
+      description: Get all matches attached to current team
+      operationId: getMatch
+      parameters:
+        - $ref: "#/components/parameters/Pageable"
+        - $ref: "#/components/parameters/MatchSelector"
+      responses:
+        200:
+          $ref: "#/components/responses/PagedMatchResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+
+  /teams/{teamId}/matches/{matchId}:
+    patch:
+      tags:
+        - Matches
+      security:
+        - bearerAuth: [ ]
+      summary: Update a upcoming match
+      description: Update a upcoming match from a team
+      operationId: updateMatch
+      parameters:
+        - $ref: "#/components/parameters/MatchId"
+        - $ref: "#/components/parameters/TeamId"
+      requestBody:
+        $ref: "#/components/requestBodies/PatchMatchRequest"
+      responses:
+        204:
+          description: "Updated"
+        400:
+          $ref: "#/components/responses/BadRequestErrorInfo"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+
+  /teams/{teamId}/matches/{matchId}/details:
+    put:
+      tags:
+        - Matches
+      security:
+        - bearerAuth: [ ]
+      summary: Add a detail for a match from past or to future
+      description: Add detail to match
+      operationId: createMatchDetails
+      parameters:
+        - $ref: "#/components/parameters/MatchId"
+        - $ref: "#/components/parameters/TeamId"
+      requestBody:
+        $ref: "#/components/requestBodies/PutDetailMatchRequest"
+      responses:
+        204:
+          description: "Added detail"
+        400:
+          $ref: "#/components/responses/BadRequestErrorInfo"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
 
 
 components:
+  #Parameters
   parameters:
     TeamId:
       name: teamId
@@ -248,12 +345,26 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/Id'
+    MatchId:
+      name: matchId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+    MatchSelector:
+      name: match
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/MatchSelector"
     Pageable:
       name: pageable
       in: query
       required: false
       schema:
         $ref: "#/components/schemas/PageableRequest"
+
+  ### Responses
   responses:
     LoginResponse:
       description: Successful login information
@@ -323,6 +434,27 @@ components:
             allOf:
               - $ref:  "#/components/schemas/PageableResponse"
 
+    MatchResponse:
+      description: Match Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MatchResponse"
+
+    PagedMatchResponse:
+      description: Paged Match Response
+      content:
+        application/json:
+          schema:
+            properties:
+              content:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MatchResponse"
+            allOf:
+              - $ref:  "#/components/schemas/PageableResponse"
+
+
     BadRequestErrorInfo:
       description: Bad Request
       content:
@@ -347,6 +479,8 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
+
+  ###Request Body
   requestBodies:
     LoginRequest:
       description: Signup a new User
@@ -401,6 +535,40 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PlayerProperties"
+
+    CreateMatchRequest:
+      description: Create a match
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/MatchProperties"
+              - $ref: "#/components/schemas/MatchDetail"
+              - $ref: "#/components/schemas/MatchRequiredProperties"
+              - $ref: "#/components/schemas/MatchPlayerComposition"
+
+    PatchMatchRequest:
+      description: Update a future match
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/MatchProperties"
+            properties:
+              addPlayers:
+                $ref: "#/components/schemas/MatchPlayerComposition"
+              removePlayers:
+                $ref: "#/components/schemas/MatchPlayerComposition"
+
+
+    PutDetailMatchRequest:
+      description: Update a future match
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/MatchDetail"
+
 
   schemas:
     Id:
@@ -549,6 +717,73 @@ components:
       allOf:
         - $ref: "#/components/schemas/PlayerProperties"
         - $ref: "#/components/schemas/PlayerId"
+
+    MatchId:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+
+    MatchProperties:
+      type: object
+      properties:
+        opponent:
+          type: string
+          example: Germany
+          description: Opponent team name
+        location:
+          type: string
+          example: Maracanã Stadium
+        date:
+          type: string
+          format: date-time
+          example: 2021-10-01T10:33:00Z
+          description: All date-time information in the API will be using UTC
+
+    MatchDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          example: It's supose to be a sunny day
+
+    MatchPlayerComposition:
+      type: object
+      properties:
+        players:
+          type: array
+          uniqueItems: true
+          items:
+            - $ref: "#/components/schemas/PlayerId"
+
+    MatchRequiredProperties:
+      type: object
+      required:
+        - opponent
+        - location
+        - date
+        - detail
+        - players
+
+    MatchResponse:
+      type: object
+      properties:
+        players:
+          items:
+            $ref: "#/components/schemas/PlayerResponse"
+        details:
+          items:
+            $ref: "#/components/schemas/MatchDetail"
+      allOf:
+        - $ref: "#/components/schemas/MatchProperties"
+        - $ref: "#/components/schemas/MatchId"
+        - $ref: "#/components/schemas/MatchSelector"
+
+    MatchSelector:
+      type: string
+      enum:
+        - FUTURE
+        - PAST
 
     PageableResponse:
       description: Default pageable response

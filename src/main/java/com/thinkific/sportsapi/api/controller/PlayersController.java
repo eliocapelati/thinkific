@@ -36,7 +36,7 @@ public final class PlayersController extends BaseController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public PlayerResponse createPlayer(@AuthenticationPrincipal Jwt principal,
                                        @PathVariable String teamId,
                                        @Valid @RequestBody CreatePlayerRequest request) {

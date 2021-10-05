@@ -81,7 +81,7 @@ public final class TeamsController extends BaseController {
         return getTeamCase.handle(userEmail, id);
     }
 
-    @PatchMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateTeam(@PathVariable String id,
                            @NotNull @RequestBody CreateTeamRequest patchRequest,

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler;
 import org.springframework.web.server.ServerWebInputException;
 
 import java.time.Instant;
@@ -22,7 +24,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler  {
     private final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 

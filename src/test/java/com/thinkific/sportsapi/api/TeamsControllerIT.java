@@ -288,7 +288,6 @@ class TeamsControllerIT extends CommonSetup<TeamRepository> {
         client
                 .patch()
                 .uri(BASE_PATH + "/{id}", "123")
-                .accept(APPLICATION_JSON)
                 .header("Authorization", getAccessToken())
                 .bodyValue(patch)
                 .exchange()
