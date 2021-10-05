@@ -30,7 +30,7 @@ public class SignupUserCase {
         this.authService = authService;
     }
 
-    public void handle(CreateUserRequest request){
+    public void handle(CreateUserRequest request) {
         checkUserExists(request.getEmail());
 
         final UsersEntity user = mapper.from(request);
@@ -41,11 +41,11 @@ public class SignupUserCase {
         log.info("Successful saved user {}", user.getEmail());
     }
 
-    private void checkUserExists(String email){
+    private void checkUserExists(String email) {
         final UsersEntity usersEntity = new UsersEntity();
         usersEntity.setEmail(email);
         Example<UsersEntity> example = Example.of(usersEntity);
-        if(usersRepository.exists(example)){
+        if (usersRepository.exists(example)) {
             log.debug("User with email {} already exists", email);
             throw new AlreadyExistsException();
         }

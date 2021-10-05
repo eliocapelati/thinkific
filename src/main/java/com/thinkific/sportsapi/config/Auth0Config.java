@@ -17,7 +17,7 @@ public class Auth0Config {
     }
 
     @Bean
-    public AuthAPI configure(){
+    public AuthAPI configure() {
         return new AuthAPI(properties.getDomain(), properties.getClientId(), properties.getClientSecret());
     }
 }

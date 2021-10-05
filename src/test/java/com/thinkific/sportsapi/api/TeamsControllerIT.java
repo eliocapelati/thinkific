@@ -23,7 +23,6 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 

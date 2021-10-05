@@ -28,7 +28,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CantSignupUserException.class)
     @ResponseStatus(SERVICE_UNAVAILABLE)
-    public @ResponseBody ErrorInfo onCantSignupUserException(final CantSignupUserException exception) {
+    public @ResponseBody
+    ErrorInfo onCantSignupUserException(final CantSignupUserException exception) {
         return mapErrorInfo(
                 SERVICE_UNAVAILABLE,
                 exception.getMessage()
@@ -37,7 +38,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(NOT_FOUND)
-    public @ResponseBody ErrorInfo onNotFoundException(final NotFoundException exception) {
+    public @ResponseBody
+    ErrorInfo onNotFoundException(final NotFoundException exception) {
 
         return mapErrorInfo(
                 NOT_FOUND,
@@ -47,13 +49,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoContentException.class)
     @ResponseStatus(NO_CONTENT)
-    public @ResponseBody void onNoContentException(final NoContentException exception) {
+    public @ResponseBody
+    void onNoContentException(final NoContentException exception) {
         log.trace("No content for {}", exception.getMessage());
     }
 
     @ExceptionHandler(AlreadyExistsException.class)
     @ResponseStatus(BAD_REQUEST)
-    public @ResponseBody ErrorInfo onAlreadyExistsException(final AlreadyExistsException exception) {
+    public @ResponseBody
+    ErrorInfo onAlreadyExistsException(final AlreadyExistsException exception) {
 
         return mapErrorInfo(
                 BAD_REQUEST,
@@ -63,7 +67,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WebExchangeBindException.class)
     @ResponseStatus(BAD_REQUEST)
-    public @ResponseBody ErrorInfo onBindException(final WebExchangeBindException bindViolation) {
+    public @ResponseBody
+    ErrorInfo onBindException(final WebExchangeBindException bindViolation) {
 
         final List<Violation> violationList = bindViolation
                 .getFieldErrors()
@@ -80,7 +85,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ServerWebInputException.class)
     @ResponseStatus(BAD_REQUEST)
-    public @ResponseBody ErrorInfo handle(final ServerWebInputException exception){
+    public @ResponseBody
+    ErrorInfo handle(final ServerWebInputException exception) {
         return mapErrorInfo(
                 BAD_REQUEST,
                 exception.getReason()
@@ -90,7 +96,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(SERVICE_UNAVAILABLE)
-    public @ResponseBody ErrorInfo onException(final Exception exception) {
+    public @ResponseBody
+    ErrorInfo onException(final Exception exception) {
         log.trace("Got a {} returning {}", exception.getMessage(), SERVICE_UNAVAILABLE.getReasonPhrase());
 
         return mapErrorInfo(
@@ -99,10 +106,11 @@ public class GlobalExceptionHandler {
         );
     }
 
-    private Violation mapViolation(final String fieldName, final String message){
+    private Violation mapViolation(final String fieldName, final String message) {
         return new Violation(fieldName, message);
     }
-    private ErrorInfo mapErrorInfo(HttpStatus status, String message){
+
+    private ErrorInfo mapErrorInfo(HttpStatus status, String message) {
         return new ErrorInfo(
                 Instant.now(),
                 status.value(),
@@ -111,7 +119,8 @@ public class GlobalExceptionHandler {
                 null
         );
     }
-    private ErrorInfo mapErrorInfo(HttpStatus status, String message, List<Violation> errors){
+
+    private ErrorInfo mapErrorInfo(HttpStatus status, String message, List<Violation> errors) {
         return new ErrorInfo(
                 Instant.now(),
                 status.value(),

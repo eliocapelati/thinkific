@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.jwt.MappedJwtClaimSetConverter;
 import java.util.Collections;
 import java.util.Map;
 
-public class Auth0ClaimAdapter implements Converter<Map<String, Object>, Map<String, Object>>{
+public class Auth0ClaimAdapter implements Converter<Map<String, Object>, Map<String, Object>> {
 
     public static final String DEFAULT_VALUE = "";
     private final MappedJwtClaimSetConverter delegate = MappedJwtClaimSetConverter.withDefaults(Collections.emptyMap());

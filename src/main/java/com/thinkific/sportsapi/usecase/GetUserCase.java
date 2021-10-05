@@ -28,7 +28,7 @@ public class GetUserCase {
         this.mapper = mapper;
     }
 
-    public UserResponse handle(String email){
+    public UserResponse handle(String email) {
 
         log.trace("Lookup user: {}", email);
         final UsersEntity entity = new UsersEntity(email);

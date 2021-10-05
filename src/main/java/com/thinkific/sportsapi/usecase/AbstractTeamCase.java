@@ -11,25 +11,27 @@ import java.util.Objects;
 
 public abstract class AbstractTeamCase<T extends MongoRepository<TeamEntity, String>> {
 
-    @Autowired
-    protected T repository;
-    @Autowired
-    protected TeamMapper mapper;
-    @Autowired
-    protected GetUserCase userCase;
-
     protected static final String RESOURCE = "team";
     protected static final String VALUE = "teamName";
 
-    protected final void checkTeamExist(String teamName){
-        if(Objects.isNull(teamName) || teamName.isBlank()){
+    @Autowired
+    protected T repository;
+
+    @Autowired
+    protected TeamMapper mapper;
+
+    @Autowired
+    protected GetUserCase userCase;
+
+    protected final void checkTeamExist(String teamName) {
+        if (Objects.isNull(teamName) || teamName.isBlank()) {
             return;
         }
         final TeamEntity team = new TeamEntity();
         team.setTeamName(teamName);
         final Example<TeamEntity> of = Example.of(team);
 
-        if(this.repository.exists(of)) {
+        if (this.repository.exists(of)) {
             throw new AlreadyExistsException(RESOURCE, VALUE);
         }
     }

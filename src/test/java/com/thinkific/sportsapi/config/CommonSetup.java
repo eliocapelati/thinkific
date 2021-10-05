@@ -1,6 +1,8 @@
 package com.thinkific.sportsapi.config;
 
 import com.github.javafaker.Faker;
+import com.thinkific.sportsapi.api.domain.players.CreatePlayerRequest;
+import com.thinkific.sportsapi.api.domain.players.PlayerResponse;
 import com.thinkific.sportsapi.api.domain.teams.CreateTeamRequest;
 import com.thinkific.sportsapi.api.domain.teams.TeamResponse;
 import com.thinkific.sportsapi.api.domain.users.CreateUserRequest;
@@ -13,9 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.time.Duration;
-import java.time.Instant;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -41,6 +44,7 @@ public abstract class CommonSetup<T extends MongoRepository<?,?>> {
         repository.deleteAll();
         client = client.mutate().responseTimeout(Duration.ofMinutes(60)).build();
     }
+
 
     protected final String getValidPassword() {
         return faker.regexify("([0-9][a-z][A-Z][!@#]){8,100}");
@@ -116,5 +120,35 @@ public abstract class CommonSetup<T extends MongoRepository<?,?>> {
             final TeamResponse team = createTeam();
             log.debug("Created the team {} ", team);
         }
+    }
+
+    protected final CreatePlayerRequest createPlayerRequest(){
+        return new CreatePlayerRequest(
+                faker.starTrek().character(),
+                faker.name().lastName(),
+                LocalDate.ofInstant(faker.date().birthday(18, 180).toInstant(), ZoneId.systemDefault())
+        );
+    }
+
+    protected final PlayerResponse createPlayer(String teamId){
+        return  client.post()
+                .uri("/v1/teams/{teamsId}/players", teamId)
+                .contentType(APPLICATION_JSON)
+                .bodyValue(createPlayerRequest())
+                .accept(APPLICATION_JSON)
+                .header("Authorization", getAccessToken())
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(PlayerResponse.class)
+                .returnResult()
+                .getResponseBody();
+    }
+
+    protected final List<PlayerResponse> createPlayers(Integer amount, String teamId){
+        final ArrayList<PlayerResponse> playerResponses = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+           playerResponses.add(createPlayer(teamId));
+        }
+        return playerResponses;
     }
 }

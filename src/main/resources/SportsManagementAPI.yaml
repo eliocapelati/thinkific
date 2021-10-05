@@ -87,7 +87,7 @@ paths:
       security:
         - bearerAuth: [ ]
       summary: Get all teams paged
-      description: Create a team and attach to the current user in the auth token
+      description: Get all teams attached to current user
       operationId: getTeams
       parameters:
         - $ref: "#/components/parameters/Pageable"
@@ -101,14 +101,14 @@ paths:
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
 
-  /teams/{id}:
+  /teams/{teamId}:
     get:
       tags:
         - Teams
       security:
         - bearerAuth: [ ]
       summary: Get a team by id
-      description: Create a team and attach to the current user in the auth token
+      description: Get a team by id
       operationId: getTeamById
       parameters:
         - $ref: "#/components/parameters/TeamId"
@@ -127,7 +127,7 @@ paths:
       security:
         - bearerAuth: []
       summary: Update a team by id
-      description: Create a team and attach to the current user in the auth token
+      description: Update a team attached to the current user in the auth token
       operationId: updateTeam
       parameters:
         - $ref: "#/components/parameters/TeamId"
@@ -145,10 +145,105 @@ paths:
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
 
+  /teams/{teamId}/players:
+    post:
+      tags:
+        - Players
+      security:
+        - bearerAuth: [ ]
+      summary: Create a player to a team that belongs to the current user
+      description: Create a player from a team
+      operationId: createPlayer
+      parameters:
+          - $ref: "#/components/parameters/TeamId"
+      requestBody:
+        $ref: "#/components/requestBodies/CreatePlayerRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/PlayersResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+    get:
+      tags:
+        - Players
+      security:
+        - bearerAuth: [ ]
+      summary: Get all paged players from a team that belongs to the current user
+      description: Get all players from a team
+      operationId: getPlayers
+      parameters:
+        - $ref: "#/components/parameters/Pageable"
+        - $ref: "#/components/parameters/TeamId"
+      responses:
+        200:
+          $ref: "#/components/responses/PagedPlayersResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+
+  /teams/{teamId}/players/{playerId}:
+    delete:
+      tags:
+        - Players
+      security:
+        - bearerAuth: [ ]
+      summary: Delete a player from a team
+      description: Delete a player from a team
+      operationId: deletePlayer
+      parameters:
+        - $ref: "#/components/parameters/TeamId"
+        - $ref: "#/components/parameters/PlayerId"
+      responses:
+        204:
+          description: "Deleted"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+    patch:
+      tags:
+        - Players
+      security:
+        - bearerAuth: [ ]
+      summary: Update a player from a team
+      description: Update a player from a team
+      operationId: updatePlayer
+      parameters:
+        - $ref: "#/components/parameters/TeamId"
+        - $ref: "#/components/parameters/PlayerId"
+      requestBody:
+        $ref: "#/components/requestBodies/PatchPlayerRequest"
+      responses:
+        204:
+          description: "Updated"
+        401:
+          $ref: "#/components/responses/UnauthorizedErrorInfo"
+        404:
+          $ref: "#/components/responses/NotFoundErrorInfo"
+        503:
+          $ref: "#/components/responses/ServiceUnavailableErrorInfo"
+
+
+
 components:
   parameters:
     TeamId:
-      name: TeamId
+      name: teamId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+    PlayerId:
+      name: playerId
       in: path
       required: true
       schema:
@@ -205,6 +300,26 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/TeamResponse"
+            allOf:
+              - $ref:  "#/components/schemas/PageableResponse"
+
+    PlayersResponse:
+      description: Player Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PlayerResponse"
+
+    PagedPlayersResponse:
+      description: Paged player reaponse
+      content:
+        application/json:
+          schema:
+            properties:
+              content:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlayerResponse"
             allOf:
               - $ref:  "#/components/schemas/PageableResponse"
 
@@ -269,6 +384,23 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/TeamProperties"
+
+    CreatePlayerRequest:
+      description: Create a player in a team
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PlayerProperties"
+              - $ref: "#/components/schemas/PlayerRequiredProperties"
+
+    PatchPlayerRequest:
+      description: Update a Player
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PlayerProperties"
 
   schemas:
     Id:
@@ -383,6 +515,40 @@ components:
       allOf:
         - $ref: "#/components/schemas/TeamProperties"
         - $ref: "#/components/schemas/TeamId"
+
+    PlayerProperties:
+      type: object
+      properties:
+        firstName:
+          $ref: "#/components/schemas/Name"
+        lastName:
+          $ref: "#/components/schemas/Name"
+        birthDate:
+          type: string
+          format: date
+          example: "1921-09-19"
+
+    PlayerRequiredProperties:
+       type: object
+       required:
+         - firstName
+         - lastName
+         - birthDate
+
+    PlayerId:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+
+    PlayerResponse:
+      type: object
+      properties:
+        teamId:
+          $ref: "#/components/schemas/Id"
+      allOf:
+        - $ref: "#/components/schemas/PlayerProperties"
+        - $ref: "#/components/schemas/PlayerId"
 
     PageableResponse:
       description: Default pageable response

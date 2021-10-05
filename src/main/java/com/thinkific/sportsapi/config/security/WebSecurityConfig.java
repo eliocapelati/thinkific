@@ -22,7 +22,6 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 
-
 @Configuration
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
@@ -54,7 +53,7 @@ public class WebSecurityConfig {
 
         //Set up the application layer
         http
-                .authorizeExchange( c -> c
+                .authorizeExchange(c -> c
                         .pathMatchers(HttpMethod.POST, permitPost).permitAll()
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
                         .anyExchange().authenticated()
@@ -68,6 +67,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedMethods(List.of(
                 HttpMethod.GET.name(),
+                HttpMethod.PATCH.name(),
                 HttpMethod.PUT.name(),
                 HttpMethod.POST.name(),
                 HttpMethod.DELETE.name()

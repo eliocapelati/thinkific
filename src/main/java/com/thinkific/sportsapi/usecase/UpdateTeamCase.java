@@ -19,7 +19,7 @@ public class UpdateTeamCase extends AbstractTeamCase<TeamRepository> {
     private final Logger log = LoggerFactory.getLogger(UpdateTeamCase.class);
 
 
-    public void handle(final String email, final String teamId, final CreateTeamRequest patch){
+    public void handle(final String email, final String teamId, final CreateTeamRequest patch) {
         checkTeamExist(patch.teamName());
 
         final UserResponse user = this.userCase.handle(email);

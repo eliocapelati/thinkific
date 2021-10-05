@@ -1,10 +1,10 @@
 package com.thinkific.sportsapi.mapper;
 
 import com.thinkific.sportsapi.api.domain.PageableResponse;
-import com.thinkific.sportsapi.api.domain.teams.CreateTeamRequest;
+import com.thinkific.sportsapi.api.domain.players.CreatePlayerRequest;
+import com.thinkific.sportsapi.api.domain.players.PlayerResponse;
 import com.thinkific.sportsapi.api.domain.teams.TeamResponse;
-import com.thinkific.sportsapi.api.domain.users.UserResponse;
-import com.thinkific.sportsapi.data.domain.TeamEntity;
+import com.thinkific.sportsapi.data.domain.PlayersEntity;
 import org.mapstruct.*;
 import org.springframework.data.domain.Page;
 
@@ -12,29 +12,31 @@ import java.util.List;
 import java.util.Objects;
 
 @Mapper(componentModel = "spring")
-public interface TeamMapper {
+public interface PlayerMapper {
 
-    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "teamId", source = "team.id")
     @Mapping(target = "id", ignore = true)
-    TeamEntity from(CreateTeamRequest request, UserResponse user);
+    PlayersEntity from(CreatePlayerRequest request, TeamResponse team);
 
-    TeamResponse from(TeamEntity entity);
+    PlayerResponse from(PlayersEntity entity);
 
-    default PageableResponse<TeamResponse> from(Page<TeamEntity> teamEntities) {
+
+    default PageableResponse<PlayerResponse> from(Page<PlayersEntity> teamEntities) {
         if (Objects.isNull(teamEntities)) {
             return null;
         }
 
-        final List<TeamResponse> collect = teamEntities
+        final List<PlayerResponse> collect = teamEntities
                 .getContent()
                 .stream()
                 .map(this::from)
                 .toList();
+        System.out.println(teamEntities);
 
         return new PageableResponse<>(collect, teamEntities.getTotalPages(), teamEntities.getTotalElements());
     }
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateTeam(@MappingTarget TeamEntity entity, CreateTeamRequest patch);
+    void updateTeam(@MappingTarget PlayersEntity entity, CreatePlayerRequest patch);
 
 }

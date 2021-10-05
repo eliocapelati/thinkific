@@ -3,12 +3,12 @@ package com.thinkific.sportsapi.api.domain;
 import java.util.List;
 
 public class PageableResponse<T> {
-    private List<T> content;
-    private int totalPages;
-    private int totalElements;
-    private int size;
+    private final List<T> content;
+    private final int totalPages;
+    private final long totalElements;
+    private final int size;
 
-    public PageableResponse(List<T> content, int totalPages, int totalElements) {
+    public PageableResponse(List<T> content, int totalPages, long totalElements) {
         this.content = content;
         this.totalPages = totalPages;
         this.totalElements = totalElements;
@@ -23,7 +23,7 @@ public class PageableResponse<T> {
         return totalPages;
     }
 
-    public int getTotalElements() {
+    public long getTotalElements() {
         return totalElements;
     }
 

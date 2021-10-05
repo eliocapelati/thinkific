@@ -23,9 +23,9 @@ import org.springframework.stereotype.Service;
 public class Auth0ServiceImpl implements AuthService {
     private final Logger log = LoggerFactory.getLogger(Auth0ServiceImpl.class);
 
-    private AuthAPI auth;
-    private Auth0Properties properties;
-    private UserMapper mapper;
+    private final AuthAPI auth;
+    private final Auth0Properties properties;
+    private final UserMapper mapper;
 
     @Autowired
     public Auth0ServiceImpl(final AuthAPI auth,
@@ -37,7 +37,7 @@ public class Auth0ServiceImpl implements AuthService {
     }
 
     @Override
-    public void createUser(CreateUserRequest request){
+    public void createUser(CreateUserRequest request) {
         SignUpRequest signup = auth
                 .signUp(request.getEmail(),
                         request.getUserName(),

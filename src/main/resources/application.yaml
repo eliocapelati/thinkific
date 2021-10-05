@@ -30,7 +30,6 @@ spring:
 
 
 
-
 #https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator.endpoints
 management:
   server.ssl.enabled: false
@@ -59,3 +58,6 @@ info:
     java:
       vendor: ${java.specification.vendor}
       vm-name: ${java.vm.name}
+logging:
+  level:
+    org.mongodb.driver: error

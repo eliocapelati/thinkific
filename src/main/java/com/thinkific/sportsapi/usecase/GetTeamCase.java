@@ -24,15 +24,15 @@ public class GetTeamCase {
         this.userCase = userCase;
     }
 
-    public TeamResponse handle(String userEmail, String teamId){
+    public TeamResponse handle(String userEmail, String teamId) {
         final TeamEntity teamEntity = new TeamEntity(teamId);
         teamEntity.setUserId(this.userCase.handle(userEmail).id());
 
         final Example<TeamEntity> of = Example.of(teamEntity);
 
         return this.repository
-                   .findOne(of)
-                   .map(mapper::from)
-                   .orElseThrow(() -> new NotFoundException(RESOURCE));
+                .findOne(of)
+                .map(mapper::from)
+                .orElseThrow(() -> new NotFoundException(RESOURCE));
     }
 }

@@ -25,8 +25,8 @@ public class GetPageableTeamCase {
         this.userCase = userCase;
     }
 
-    public PageableResponse<TeamResponse> handle(String userEmail, Pageable page){
-        final var pageRequest = PageRequest.of(page.page(), page.size());
+    public PageableResponse<TeamResponse> handle(String userEmail, Pageable page) {
+        final var pageRequest = PageRequest.of(page.getPage(), page.getSize());
 
         final var entityExample = new TeamEntity();
         entityExample.setUserId(userCase.handle(userEmail).id());

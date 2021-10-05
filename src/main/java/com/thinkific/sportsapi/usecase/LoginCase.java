@@ -20,7 +20,7 @@ public class LoginCase {
         this.authService = authService;
     }
 
-    public LoginResponse handle(LoginRequest login){
+    public LoginResponse handle(LoginRequest login) {
         final LoginResponse holder = authService.login(login);
         log.debug("User successfully logged in with {} the token will expire in {}s",
                 login.userNameOrEmail(), holder.getExpiresIn()

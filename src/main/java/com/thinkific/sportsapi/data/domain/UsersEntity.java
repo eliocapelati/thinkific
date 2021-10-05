@@ -23,9 +23,11 @@ public class UsersEntity extends AbstractAuditEntity {
         this.userName = userName;
         this.email = email;
     }
+
     public UsersEntity(String email) {
         this.email = email;
     }
+
     public UsersEntity() {
     }
 

@@ -37,21 +37,23 @@ public final class UsersController extends BaseController {
 
     @PostMapping(path = {"", "/"}, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void createUser(@Valid @RequestBody CreateUserRequest request){
+    public void createUser(@Valid @RequestBody CreateUserRequest request) {
         log.trace("Create User Request {}", request);
         signupUserCase.handle(request);
     }
 
     @PostMapping(value = {"/login", "/login/"}, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody LoginResponse login(@Valid @RequestBody LoginRequest login){
+    public @ResponseBody
+    LoginResponse login(@Valid @RequestBody LoginRequest login) {
         log.trace("Login Request {}", login);
         return loginCase.handle(login);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody UserResponse getUserInfo(@AuthenticationPrincipal Jwt principal){
+    public @ResponseBody
+    UserResponse getUserInfo(@AuthenticationPrincipal Jwt principal) {
         log.trace("Get Uer {}", principal);
         final String email = getUserEmail(principal);
         return userCase.handle(email);

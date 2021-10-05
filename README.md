@@ -2,8 +2,34 @@
 
 - The first step was reading the document and extract some functional and non-functional requirements
 - The project structure was created using [Spring Boot and Java](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.5.5&packaging=jar&jvmVersion=11&groupId=com.thinkific&artifactId=sportsapi&name=Sports%20Management%20API&description=Demo%20project%20for%20Spring%20Boot&packageName=com.thinkific.sportsapi&dependencies=devtools,testcontainers,actuator,cloud-starter-sleuth,data-mongodb,webflux)
+  - The stack is:
+    - Java 17
+    - SpringBoot
+    - WebFlux (Reactive support)
+    - Validation
+    - MongoDB
+    - Monitoring tools (Actuator and Sleuth)
+      - Log correlation
+      - Readiness and Liveness probe
+    - Developer tools
+      - Hotswap
+      - Livereload
+    - Security
+      - API security
+      - Oauth Resource Server
+      - Auth0 library
+    - Test stack
+      - SpringBoot Starter
+      - TestContainers
+        - MongoDB
+      - Faker
 - First step was a creation of the contract of signup and login 
 - Then an implementation of the process using Auth0 with tests
+- Following the contract first approach, I created the spec and implementation for Team and Player
+- I decided to take a lot of care defining the API definition to ensure the contract of the API.
+- I decided to use integration test that is close to a real scenario and trying to not mock every thing.
+  - I'm using a test container approach with real full mongodb for integration tests.
+- For the development process, I decided to use a Trunk based development. But in the real world working with a team, I strongly recommend using gitflow style workflow.
 
 ### Date
 
@@ -31,7 +57,8 @@ For tests and easy evaluation during the assessment, I've created a signup and l
 
 
 ### Stretch goals attempted
-If applicable, use this area to tell us what stretch goals you attempted. What went well? What do you wish you could have done better? If you didn't attempt any of the stretch goals, feel free to let us know why.
+ - API spec using OpenAPI, available on:
+   - src/main/resources/SportsManagementAPI.yaml
 
 ### Instructions to run assignment locally
 If applicable, please provide us with the necessary instructions to run your solution.
@@ -41,9 +68,14 @@ If applicable, please provide us with the necessary instructions to run your sol
 - Full Oauth2 support
 - unit tests
 - Full text search tool like Elasticsearch for a better search support in API.
+- In memory datastore like Redis to speed up the application responses
 
 
 ### Other information about your submission that you feel it's important that we know if applicable.
 
+- Due to my scenario of the project I'm working on, I had to implement over the days and little by little the challenge. And with that I ended up spending more hours than initially necessary if I had done from beginning to end in one go.
+
 ### Your feedback on this technical challenge
-Have feedback for how we could make this assignment better? Please let us know.
+
+The test was a lot of fun, but it takes a lot of work to do.
+I would just like to recommend decreasing the size of the challenge a little.

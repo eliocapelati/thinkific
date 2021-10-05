@@ -26,12 +26,13 @@ public class CreateUserRequest {
 
     @NotEmpty
     @Pattern(
-             regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&*+=()]).{8,}$",
-             message = "{Pattern.message}"
+            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&*+=()]).{8,}$",
+            message = "{Pattern.message}"
     )
     private String password;
 
-    public CreateUserRequest(){}
+    public CreateUserRequest() {
+    }
 
     public CreateUserRequest(String firstName, String lastName, String userName, String email, String password) {
         this.firstName = firstName;

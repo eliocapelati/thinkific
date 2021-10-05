@@ -43,8 +43,8 @@ public final class TeamsController extends BaseController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TeamResponse> createTeam(@Valid @RequestBody CreateTeamRequest request,
-                                                  @AuthenticationPrincipal Jwt principal,
-                                                  UriComponentsBuilder builder){
+                                                   @AuthenticationPrincipal Jwt principal,
+                                                   UriComponentsBuilder builder) {
         log.trace("CreateTeamRequest {}", request);
 
         final String userEmail = getUserEmail(principal);
@@ -60,8 +60,9 @@ public final class TeamsController extends BaseController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody PageableResponse<TeamResponse> getTeams(@Valid Pageable pageable,
-                                                                 @AuthenticationPrincipal Jwt principal){
+    public @ResponseBody
+    PageableResponse<TeamResponse> getTeams(@Valid Pageable pageable,
+                                            @AuthenticationPrincipal Jwt principal) {
         log.trace("Pageable {}", pageable);
         final String userEmail = getUserEmail(principal);
 
@@ -70,8 +71,9 @@ public final class TeamsController extends BaseController {
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody TeamResponse getTeamById(@PathVariable String id,
-                                                  @AuthenticationPrincipal Jwt principal){
+    public @ResponseBody
+    TeamResponse getTeamById(@PathVariable String id,
+                             @AuthenticationPrincipal Jwt principal) {
         log.trace("getTeamById {}", id);
 
         final String userEmail = getUserEmail(principal);
@@ -83,7 +85,7 @@ public final class TeamsController extends BaseController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateTeam(@PathVariable String id,
                            @NotNull @RequestBody CreateTeamRequest patchRequest,
-                           @AuthenticationPrincipal Jwt principal){
+                           @AuthenticationPrincipal Jwt principal) {
 
         log.trace("updateTeam id {} patch {}", id, patchRequest);
 
@@ -92,7 +94,6 @@ public final class TeamsController extends BaseController {
         this.updateTeamCase.handle(userEmail, id, patchRequest);
 
     }
-
 
 
 }
