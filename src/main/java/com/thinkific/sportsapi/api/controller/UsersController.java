@@ -36,7 +36,7 @@ public final class UsersController extends BaseController {
     }
 
     @PostMapping(path = {"", "/"}, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@Valid @RequestBody CreateUserRequest request) {
         log.trace("Create User Request {}", request);
         signupUserCase.handle(request);

@@ -88,7 +88,7 @@ class UsersControllerIT extends CommonSetup<UsersRepository> {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(userRequest)
                 .exchange()
-                .expectStatus().is2xxSuccessful();
+                .expectStatus().isCreated();
     }
 
     @Test
