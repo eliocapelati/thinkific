@@ -3,7 +3,7 @@ services:
   api:
     container_name: thinkific-api
     image: "thinkific-api"
-    build: .
+    build: deployment
     ports:
       - "8080:8080"
     depends_on:
@@ -11,6 +11,6 @@ services:
   mongodb:
     container_name: thinkific-db
     image: "mongo:4.2"
-    build: ..
+    build: ""
     ports:
       - "8080:8080"
