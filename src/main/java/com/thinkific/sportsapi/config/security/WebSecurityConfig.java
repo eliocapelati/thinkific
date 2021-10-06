@@ -38,7 +38,11 @@ public class WebSecurityConfig {
 
         final String[] permitPost = {
                 "/v1/users", "/v1/users/login",
-                "/v1/users/", "/v1/users/login/"
+                "/v1/users/", "/v1/users/login/",
+                "/actuator", "/actuator/health"
+        };
+        final String[] permitGet = {
+                "/actuator", "/actuator/health"
         };
 
         //Set up the server layer
@@ -55,6 +59,7 @@ public class WebSecurityConfig {
         http
                 .authorizeExchange(c -> c
                         .pathMatchers(HttpMethod.POST, permitPost).permitAll()
+                        .pathMatchers(HttpMethod.GET, permitGet).permitAll()
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
                         .anyExchange().authenticated()
                 )
@@ -70,7 +75,8 @@ public class WebSecurityConfig {
                 HttpMethod.PATCH.name(),
                 HttpMethod.PUT.name(),
                 HttpMethod.POST.name(),
-                HttpMethod.DELETE.name()
+                HttpMethod.DELETE.name(),
+                HttpMethod.OPTIONS.name()
         ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
