@@ -10,7 +10,7 @@ info:
 servers:
   - url: 'http://localhost:8080/v1'
     description: Local Development
-  - url: 'https://thinkific.capelati.com/v1'
+  - url: 'https://thinkific-5tppttbb5q-uc.a.run.app/v1'
     description: Production Server
 paths:
   /users:
