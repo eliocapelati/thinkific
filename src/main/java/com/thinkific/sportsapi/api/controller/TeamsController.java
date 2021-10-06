@@ -87,7 +87,7 @@ public final class TeamsController extends BaseController {
                            @NotNull @RequestBody CreateTeamRequest patchRequest,
                            @AuthenticationPrincipal Jwt principal) {
 
-        log.trace("updateTeam id {} patch {}", id, patchRequest);
+        log.trace("update id {} patch {}", id, patchRequest);
 
         final String userEmail = getUserEmail(principal);
 

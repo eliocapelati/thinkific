@@ -35,6 +35,6 @@ public interface TeamMapper {
     }
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateTeam(@MappingTarget TeamEntity entity, CreateTeamRequest patch);
+    void update(@MappingTarget TeamEntity entity, CreateTeamRequest patch);
 
 }

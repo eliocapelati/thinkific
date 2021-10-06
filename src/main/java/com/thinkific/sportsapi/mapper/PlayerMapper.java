@@ -31,12 +31,11 @@ public interface PlayerMapper {
                 .stream()
                 .map(this::from)
                 .toList();
-        System.out.println(teamEntities);
 
         return new PageableResponse<>(collect, teamEntities.getTotalPages(), teamEntities.getTotalElements());
     }
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateTeam(@MappingTarget PlayersEntity entity, CreatePlayerRequest patch);
+    void update(@MappingTarget PlayersEntity entity, CreatePlayerRequest patch);
 
 }

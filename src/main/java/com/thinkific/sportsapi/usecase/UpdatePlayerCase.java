@@ -34,7 +34,7 @@ public class UpdatePlayerCase {
                 .findByIdAndTeamId(playerId, teamResponse.id())
                 .orElseThrow(() -> new NotFoundException(RESOURCE));
 
-        mapper.updateTeam(playersEntity, patch);
+        mapper.update(playersEntity, patch);
 
         log.trace("Patched the player id {}", playerId);
 

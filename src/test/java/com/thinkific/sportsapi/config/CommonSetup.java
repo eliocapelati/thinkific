@@ -7,6 +7,9 @@ import com.thinkific.sportsapi.api.domain.teams.CreateTeamRequest;
 import com.thinkific.sportsapi.api.domain.teams.TeamResponse;
 import com.thinkific.sportsapi.api.domain.users.CreateUserRequest;
 import com.thinkific.sportsapi.api.domain.users.LoginResponse;
+import com.thinkific.sportsapi.data.domain.PlayersEntity;
+import com.thinkific.sportsapi.data.repository.PlayersRepository;
+import com.thinkific.sportsapi.mapper.PlayerMapper;
 import com.thinkific.sportsapi.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -28,6 +31,12 @@ public abstract class CommonSetup<T extends MongoRepository<?,?>> {
 
     @Autowired
     protected T repository;
+
+    @Autowired
+    private PlayersRepository playersRepository;
+
+    @Autowired
+    private PlayerMapper playerMapper;
 
     @Autowired
     protected WebTestClient client;
@@ -144,11 +153,19 @@ public abstract class CommonSetup<T extends MongoRepository<?,?>> {
                 .getResponseBody();
     }
 
-    protected final List<PlayerResponse> createPlayers(Integer amount, String teamId){
-        final ArrayList<PlayerResponse> playerResponses = new ArrayList<>();
+    protected final List<PlayerResponse> createPlayers(Integer amount, TeamResponse teamId){
+        final List<PlayersEntity> playersEntity = createPlayersEntity(amount, teamId);
+
+        return playersEntity.stream().map(playerMapper::from).toList();
+    }
+
+    protected final List<PlayersEntity> createPlayersEntity(Integer amount, TeamResponse teamResponse){
+        final ArrayList<PlayersEntity> createPlayers = new ArrayList<>();
+
         for (int i = 0; i < amount; i++) {
-           playerResponses.add(createPlayer(teamId));
+            final CreatePlayerRequest playerRequest = createPlayerRequest();
+            createPlayers.add(playerMapper.from(playerRequest, teamResponse));
         }
-        return playerResponses;
+        return playersRepository.saveAll(createPlayers);
     }
 }

@@ -153,7 +153,7 @@ class PlayersControllerIT extends CommonSetup<PlayersRepository> {
 
         final TeamResponse team = createTeam();
 
-        createPlayers(10, team.id());
+        createPlayers(10, team);
 
         client.get()
                 .uri(BASE_PATH, team.id())
@@ -172,7 +172,7 @@ class PlayersControllerIT extends CommonSetup<PlayersRepository> {
 
         final TeamResponse team = createTeam();
 
-        createPlayers(100, team.id());
+        createPlayers(100, team);
 
         client.get()
                 .uri(

@@ -1,9 +1,6 @@
 package com.thinkific.sportsapi.api.exception.handler;
 
-import com.thinkific.sportsapi.api.exception.AlreadyExistsException;
-import com.thinkific.sportsapi.api.exception.CantSignupUserException;
-import com.thinkific.sportsapi.api.exception.NoContentException;
-import com.thinkific.sportsapi.api.exception.NotFoundException;
+import com.thinkific.sportsapi.api.exception.*;
 import com.thinkific.sportsapi.api.exception.domain.ErrorInfo;
 import com.thinkific.sportsapi.api.exception.domain.Violation;
 import org.slf4j.Logger;
@@ -14,8 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.support.WebExchangeBindException;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler;
 import org.springframework.web.server.ServerWebInputException;
 
 import java.time.Instant;
@@ -56,6 +51,17 @@ public class GlobalExceptionHandler  {
         log.trace("No content for {}", exception.getMessage());
     }
 
+    @ExceptionHandler(InvalidPatchOnPastMatch.class)
+    @ResponseStatus(BAD_REQUEST)
+    public @ResponseBody
+    ErrorInfo onInvalidPatchOnPastMatch(final InvalidPatchOnPastMatch exception) {
+
+        return mapErrorInfo(
+                BAD_REQUEST,
+                exception.getMessage()
+        );
+    }
+
     @ExceptionHandler(AlreadyExistsException.class)
     @ResponseStatus(BAD_REQUEST)
     public @ResponseBody
@@ -64,6 +70,19 @@ public class GlobalExceptionHandler  {
         return mapErrorInfo(
                 BAD_REQUEST,
                 exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(PlayerIdDoesNotExistsException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public @ResponseBody
+    ErrorInfo onPlayerIdDoesNotExistsException(final PlayerIdDoesNotExistsException exception) {
+
+        String message = "Players with id %s does not exist".formatted(exception.getNotExists());
+
+        return mapErrorInfo(
+                BAD_REQUEST,
+                message
         );
     }
 

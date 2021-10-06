@@ -34,7 +34,7 @@ public class UpdateTeamCase extends AbstractTeamCase<TeamRepository> {
                 .findOne(of)
                 .orElseThrow(() -> new NotFoundException(RESOURCE));
 
-        mapper.updateTeam(teamEntity, patch);
+        mapper.update(teamEntity, patch);
 
         this.repository.save(teamEntity);
 

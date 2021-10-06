@@ -1,0 +1,11 @@
+ ________________________________________
+  App Name: ${info.app.name}
+  App Package: ${info.build.groupId}
+  App Version: ${info.build.version}
+  App Profile: ${info.app.profile}
+  Runtime:
+    vendor: ${info.env.java.vendor}
+    vm-name: ${info.env.java.vm-name}
+    version: ${info.env.java.version}
+    ${AnsiColor.RED}Spring Boot Version: ${spring-boot.version}  ${AnsiColor.BLACK}
+ ________________________________________

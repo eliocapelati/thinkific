@@ -1,6 +1,7 @@
 package com.thinkific.sportsapi.data.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ public class PlayersEntity extends AbstractAuditEntity {
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
+    @Indexed
     private String teamId;
 
     public String getId() {

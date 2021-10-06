@@ -60,7 +60,6 @@ paths:
           $ref: "#/components/responses/UnauthorizedErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
-
   /teams:
     post:
       tags:
@@ -100,7 +99,6 @@ paths:
           $ref: "#/components/responses/NotFoundErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
-
   /teams/{teamId}:
     get:
       tags:
@@ -128,7 +126,7 @@ paths:
         - bearerAuth: []
       summary: Update a team by id
       description: Update a team attached to the current user in the auth token
-      operationId: updateTeam
+      operationId: update
       parameters:
         - $ref: "#/components/parameters/TeamId"
       requestBody:
@@ -144,7 +142,6 @@ paths:
           $ref: "#/components/responses/NotFoundErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
-
   /teams/{teamId}/players:
     post:
       tags:
@@ -187,7 +184,6 @@ paths:
           $ref: "#/components/responses/NotFoundErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
-
   /teams/{teamId}/players/{playerId}:
     delete:
       tags:
@@ -231,7 +227,6 @@ paths:
           $ref: "#/components/responses/NotFoundErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
-
   /teams/{teamId}/matches:
     post:
       tags:
@@ -265,6 +260,7 @@ paths:
       description: Get all matches attached to current team
       operationId: getMatch
       parameters:
+        - $ref: "#/components/parameters/TeamId"
         - $ref: "#/components/parameters/Pageable"
         - $ref: "#/components/parameters/MatchSelector"
       responses:
@@ -276,7 +272,6 @@ paths:
           $ref: "#/components/responses/NotFoundErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
-
   /teams/{teamId}/matches/{matchId}:
     patch:
       tags:
@@ -302,7 +297,6 @@ paths:
           $ref: "#/components/responses/NotFoundErrorInfo"
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
-
   /teams/{teamId}/matches/{matchId}/details:
     put:
       tags:
@@ -329,9 +323,8 @@ paths:
         503:
           $ref: "#/components/responses/ServiceUnavailableErrorInfo"
 
-
 components:
-  #Parameters
+  ###Parameters
   parameters:
     TeamId:
       name: teamId
@@ -480,7 +473,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
 
-  ###Request Body
+  ### Request Body
   requestBodies:
     LoginRequest:
       description: Signup a new User
@@ -556,9 +549,15 @@ components:
               - $ref: "#/components/schemas/MatchProperties"
             properties:
               addPlayers:
-                $ref: "#/components/schemas/MatchPlayerComposition"
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: "#/components/schemas/Id"
               removePlayers:
-                $ref: "#/components/schemas/MatchPlayerComposition"
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: "#/components/schemas/Id"
 
 
     PutDetailMatchRequest:
@@ -569,7 +568,7 @@ components:
             allOf:
               - $ref: "#/components/schemas/MatchDetail"
 
-
+  ### Schemas
   schemas:
     Id:
       type: string
@@ -737,7 +736,7 @@ components:
         date:
           type: string
           format: date-time
-          example: 2021-10-01T10:33:00Z
+          example: 2021-11-06T10:33:00Z
           description: All date-time information in the API will be using UTC
 
     MatchDetail:
@@ -774,10 +773,11 @@ components:
         details:
           items:
             $ref: "#/components/schemas/MatchDetail"
+        matchSelector:
+          $ref: "#/components/schemas/MatchSelector"
       allOf:
         - $ref: "#/components/schemas/MatchProperties"
         - $ref: "#/components/schemas/MatchId"
-        - $ref: "#/components/schemas/MatchSelector"
 
     MatchSelector:
       type: string
@@ -844,16 +844,23 @@ components:
           items:
             $ref: "#/components/schemas/Violation"
 
+  ### Security Schemes
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
 
+### Tags
 tags:
-  - name: Teams
-    description: Manage teams
   - name: User
     description: Users management (Convenient for test purposes)
+  - name: Teams
+    description: Manage teams
+  - name: Players
+    description: Manage players of a team
+  - name: Matches
+    description: Manage matches of a team
+
 
 
