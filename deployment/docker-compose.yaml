@@ -1,0 +1,16 @@
+version: '3'
+services:
+  api:
+    container_name: thinkific-api
+    image: "thinkific-api"
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+  mongodb:
+    container_name: thinkific-db
+    image: "mongo:4.2"
+    build: ..
+    ports:
+      - "8080:8080"
